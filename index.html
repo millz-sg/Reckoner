@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Reckoner">
 <meta name="theme-color" content="#14161B">
 <title>Reckoner</title>
@@ -22,11 +22,11 @@
     background:var(--bg); color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     display:flex; justify-content:center;
-    padding-top:env(safe-area-inset-top,0px);
+    padding:0 env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px);
     overscroll-behavior:none;
   }
   #app{width:100%; max-width:460px; min-height:100dvh; display:flex; flex-direction:column;
-       padding:20px 18px calc(20px + var(--pad)); }
+       padding:calc(env(safe-area-inset-top,0px) + 22px) 18px calc(20px + var(--pad)); }
   .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums;}
   .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); font-weight:600;}
   button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; touch-action:manipulation;}
@@ -183,10 +183,10 @@ const PCTS={0.1:1000,0.5:200,1:100,2:50,2.5:40,5:20,7.5:40,10:10,12.5:8,15:20,20
 const DECS={0.1:10,0.2:5,0.25:4,0.05:20,0.5:2,0.75:4,0.125:8,0.375:8,1.5:2,2.5:2,1.25:4,3.5:2};
 
 const RANGES={
-  add:{easy:[[2,99],[2,99]], med:[[20,500],[20,500]], hard:[[100,999],[100,9999]]},
+  add:{easy:[[2,99],[2,99]], med:[[10,500],[10,500]], hard:[[100,999],[100,9999]]},
   sub:{easy:[20,99], med:[100,999], hard:[1000,9999]},
-  mul:{easy:[[2,12],[2,20]], med:[[11,99],[11,99]], hard:[[12,99],[101,999]]},
-  div:{easy:[[2,12],[2,12]], med:[[3,25],[4,40]], hard:[[6,40],[11,99]]},
+  mul:{easy:[[2,9],[2,12]], med:[[3,9],[11,99]], hard:[[11,99],[11,99]]},
+  div:{easy:[[2,12],[2,12]], med:[[2,12],[4,50]], hard:[[6,40],[11,99]]},
 };
 function gAdd(d){ const[[a1,a2],[b1,b2]]=RANGES.add[d]; const a=R(a1,a2),b=R(b1,b2);
   return {q:`${grp(a+"")} + ${grp(b+"")}`, ans:a+b}; }
@@ -197,7 +197,7 @@ function gMul(d){ const[[a1,a2],[b1,b2]]=RANGES.mul[d]; const a=R(a1,a2),b=R(b1,
 function gDiv(d){ const[[d1,d2],[q1,q2]]=RANGES.div[d]; const dv=R(d1,d2),qt=R(q1,q2);
   return {q:`${grp((dv*qt)+"")} ÷ ${dv}`, ans:qt}; }
 function gPct(d){
-  const pool = d==="easy"?[1,5,10,25,50]: d==="med"?[2,15,20,75,2.5]:[0.1,0.5,7.5,12.5,150];
+  const pool = d==="easy"?[1,5,10,25,50]: d==="med"?[2,15,20,75]:[0.1,0.5,2.5,7.5,12.5,150];
   const p = pick(pool); const denom=PCTS[p];
   const bases = NICE_BASES.filter(b=> (b*p)%100===0 && (d==="easy"? b<=1e6 : d==="hard"? b>=1e5 : true));
   const base = pick(bases.length?bases:NICE_BASES.filter(b=>(b*p)%100===0));
